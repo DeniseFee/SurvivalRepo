@@ -2,14 +2,17 @@
 
 public class BuildTest : MonoBehaviour
 {
-    [SerializeField] private GameObject[] ShownBuildables;
-    [SerializeField] private GameObject ShownBuildable;
-    [SerializeField] private GameObject[] ThingsToBuild;
-    [SerializeField] private GameObject ThingToBuild;
+    [SerializeField] private GameObject[] BuildablePrefabs;
+    [SerializeField] private GameObject[] BuiltPrefabs;
+
+    [SerializeField] private GameObject BuiltObject;
+    public GameObject BuildableCursor;
 
     public float HeightModifier;
+    public bool isOnPoles;
 
-    [SerializeField] private int buildableInt;
+    private float shownBuildableY;
+    private int buildableInt;
     private bool buildModeOn = false;
     private bool shownBuildableIsShown = false;
     private RaycastHit hit;
@@ -30,7 +33,7 @@ public class BuildTest : MonoBehaviour
 
         if (buildModeOn)
         {
-            ThingToBuild = ThingsToBuild[buildableInt];
+            BuiltObject = BuiltPrefabs[buildableInt];
             if (!shownBuildableIsShown)
             {
                 SwitchBuildable();
@@ -42,8 +45,8 @@ public class BuildTest : MonoBehaviour
         }
         else if (!buildModeOn)
         {
-            Destroy(ShownBuildable);
-            ThingToBuild = null;
+            Destroy(BuildableCursor);
+            BuiltObject = null;
             shownBuildableIsShown = false;
         }
     }
@@ -54,8 +57,8 @@ public class BuildTest : MonoBehaviour
         {
             if (shownBuildableIsShown)
             {
-                ShownBuildable.transform.position = new Vector3(hit.point.x, hit.point.y + HeightModifier, hit.point.z);
-                ShownBuildable.transform.eulerAngles = new Vector3(ShownBuildable.transform.eulerAngles.x, transform.eulerAngles.y, ShownBuildable.transform.eulerAngles.z);
+                BuildableCursor.transform.position = new Vector3(hit.point.x, shownBuildableY, hit.point.z);
+                BuildableCursor.transform.eulerAngles = new Vector3(BuildableCursor.transform.eulerAngles.x, transform.eulerAngles.y, BuildableCursor.transform.eulerAngles.z);
             }
         }
     }
@@ -64,18 +67,26 @@ public class BuildTest : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Instantiate(ThingToBuild, ShownBuildable.transform.position, ShownBuildable.transform.rotation);
+            Instantiate(BuiltObject, BuildableCursor.transform.position, BuildableCursor.transform.rotation);
         }
     }
 
     void HandleSwitchingBuildables()
     {
-        HeightModifier = ShownBuildable.transform.localScale.y / 2;
+        if (!isOnPoles) // TODO: polish this shizzle
+        {
+            HeightModifier = BuildableCursor.transform.localScale.y / 2;
+            shownBuildableY = hit.point.y + HeightModifier;
+        }
+        else if (isOnPoles)
+        {
+            //shownBuildableY = 
+        }
 
         var d = Input.GetAxis("Mouse ScrollWheel");
         if (d > 0f)
         {
-            if (buildableInt < ThingsToBuild.Length - 1)
+            if (buildableInt < BuiltPrefabs.Length - 1)
             {
                 buildableInt += 1;
                 SwitchBuildable();
@@ -93,11 +104,11 @@ public class BuildTest : MonoBehaviour
 
     void SwitchBuildable()
     {
-        Destroy(ShownBuildable);
+        Destroy(BuildableCursor);
 
         Quaternion rotation = Quaternion.identity;
-        rotation.eulerAngles = new Vector3(0, 0, 0); // TODO: correct angles
-        ShownBuildable = Instantiate(ShownBuildables[buildableInt], hit.point, rotation);
-        ThingToBuild = ThingsToBuild[buildableInt];
+        rotation.eulerAngles = new Vector3(0, 0, 0);
+        BuildableCursor = Instantiate(BuildablePrefabs[buildableInt], hit.point, rotation);
+        BuiltObject = BuiltPrefabs[buildableInt];
     }
 }

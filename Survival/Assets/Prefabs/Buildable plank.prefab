@@ -22,8 +22,8 @@ GameObject:
   - component: {fileID: 33568404914479492}
   - component: {fileID: 23389921150935248}
   - component: {fileID: 65280465222733470}
-  - component: {fileID: 114372062260848200}
   - component: {fileID: 54526881411914896}
+  - component: {fileID: 114372062260848200}
   m_Layer: 2
   m_Name: Buildable plank
   m_TagString: Buildable
@@ -126,4 +126,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   poles: []
   distanceBetweenPoles: 0
+  invisibleWallPrefab: {fileID: 1232002127661590, guid: 340897d94b361f64e822c0d5cf5720df,
+    type: 2}
+  invisibleWallBetweenPoles: {fileID: 0}
   plankLength: 0
+  buildTest: {fileID: 0}
+  shownBuildable: {fileID: 0}
